@@ -1,10 +1,10 @@
 {
- "member":[
+ "user":[
   {
     "memberId":"아이디",
     "password":"패스워드",
     "nickname":"닉네임",
-    "gender":"남"
+    "gender":"male"
   }
  ],
   "post":[
