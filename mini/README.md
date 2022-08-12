@@ -13,3 +13,7 @@ styled-components (스타일 적용) 설치 : yarn add styled-components
 유효성 검사(폼 사용자 입력 안내 적용) : yarn add react-hook-form  
 observer (무한스크롤) 설치 : yarn add react-intersection-observer  
 material ui 설치 : yarn add @material-ui/core
+
+# 기능구현 목록  
+실시간 날씨정보 구현(Open Weather Api사용)  
+실시간 시간(moment.js 사용)
