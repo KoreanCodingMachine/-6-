@@ -8,7 +8,8 @@ const Footer = () => {
 export default Footer;
 
 const Wrapper = styled.div`
-  position: fixed;
+  /* position: fixed; */
+  margin-top: 1rem;
   left: 0;
   bottom: 0;
   width: 100%;
