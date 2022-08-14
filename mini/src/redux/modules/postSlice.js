@@ -41,15 +41,19 @@ export const postData = createAsyncThunk(
 
 // 게시글 수정
 // payload -> 수정할 게시글 데이터(title,content,url,id)
-export const patchData = createAsyncThunk(
+export const putData = createAsyncThunk(
   'post/patchData',
-  async (payload, thunkApi) => {
+  async ({ id, title, content, nickname, img }, thunkApi) => {
     try {
-      const response = await axios.patch(
-        `http://localhost:5001/post/${payload.id}`
-      );
-      console.log(response);
-      return thunkApi.fulfillWithValue(payload);
+      const response = await axios.put(`http://localhost:5001/post/${id}`, {
+        id: id,
+        title: title,
+        content: content,
+        nickname: nickname,
+        img: img,
+      });
+      console.log(response.data);
+      return thunkApi.fulfillWithValue(response.data);
     } catch (error) {
       console.log(error);
       return thunkApi.rejectWithValue(error);
@@ -102,23 +106,24 @@ export const postSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
-    [patchData.pending]: (state) => {
+    [putData.pending]: (state) => {
       state.isLoading = true;
     },
-    [patchData.fulfilled]: (state, action) => {
+    [putData.fulfilled]: (state, action) => {
       state.isLoading = false;
       state.post = state.post.map((item) =>
         item.id === action.payload.id
           ? {
-              ...state,
+              ...item,
               title: action.payload.title,
               content: action.payload.content,
-              imgUrl: action.payload.imgUrl,
+              img: action.payload.img,
+              nickname: action.payload.nickname,
             }
           : item
       );
     },
-    [patchData.rejected]: (state, action) => {
+    [putData.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
