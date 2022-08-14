@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { deleteData } from '../../redux/modules/postSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const ListItem = ({ item }) => {
@@ -25,9 +25,13 @@ const ListItem = ({ item }) => {
     navigate('/modify', { state: item });
   };
 
+  const onMoveDetailHandler = () => {
+    navigate(`/detail/${id}`, { state: item });
+  };
+
   return (
     <Wrapper>
-      <section className='title'>
+      <section className='title' onClick={onMoveDetailHandler}>
         <h2>{title}</h2>
         <p>{nickname}</p>
         <p>{content}</p>
@@ -54,5 +58,8 @@ const Wrapper = styled.div`
   .title {
     display: block;
     margin: 0 auto;
+  }
+  .title:hover {
+    cursor: pointer;
   }
 `;
