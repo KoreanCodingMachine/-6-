@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import styled from 'styled-components';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onChangeEmail = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const onChangePassword = (event) => {
+    setPassword(event.target.value);
+  };
+
   return (
     <WrapperContainer>
       <Form>
@@ -14,14 +25,20 @@ const Login = () => {
             type='email'
             size='lg'
             placeholder='아이디를 입력하세요'
+            name='email'
+            value={email}
+            onChange={onChangeEmail}
           />
         </Form.Group>
-        <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+        <Form.Group className='mb-3' controlId='exampleForm.ControlInput2'>
           <Form.Label>비밀번호</Form.Label>
           <Form.Control
             type='password'
             size='lg'
             placeholder='비밀번호를 입력하세요'
+            name='password'
+            value={password}
+            onChange={onChangePassword}
           />
         </Form.Group>
         <FormBtn variant='outline-success'>로그인</FormBtn>
