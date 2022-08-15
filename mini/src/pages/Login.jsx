@@ -3,8 +3,15 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '../redux/modules/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const { loading, error, userInfo } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -16,9 +23,19 @@ const Login = () => {
     setPassword(event.target.value);
   };
 
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/');
+    }
+  }, [navigate, userInfo]);
+
+  const onSubmitForm = () => {
+    dispatch(loginUser({ email: email, password: password }));
+  };
+
   return (
     <WrapperContainer>
-      <Form>
+      <Form onSubmit={onSubmitForm}>
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>아이디</Form.Label>
           <Form.Control

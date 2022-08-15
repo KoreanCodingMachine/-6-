@@ -44,6 +44,7 @@ export const loginUser = createAsyncThunk(
       const config = {
         headers: {
           'Content-Type': 'application/json',
+          // token access token , refresh token
         },
       };
       const { data } = await axios.post(
@@ -64,10 +65,15 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// initialize userToken from local storage
+const userToken = localStorage.getItem('userToken')
+  ? localStorage.getItem('userToken')
+  : null;
+
 const initialState = {
   loading: false,
-  userInfo: {}, // for user object
-  userToken: null, // for storing the JWT
+  userInfo: null, // for user object
+  userToken, // for storing the JWT
   error: null,
   success: false, // for monitoring the registration process.
 };
@@ -75,7 +81,15 @@ const initialState = {
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      localStorage.removeItem('userToken');
+      state.loading = false;
+      state.userInfo = null;
+      state.userToken = null;
+      state.error = null;
+    },
+  },
   extraReducers: {
     [registerUser.pending]: (state, action) => {
       state.loading = true;
@@ -105,5 +119,5 @@ const userSlice = createSlice({
   },
 });
 
-export const {} = userSlice.actions;
+export const { logout } = userSlice.actions;
 export default userSlice.reducer;

@@ -8,10 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
-  const { loading, error, success, userInfo } = useSelector(
+  const { loading, error, userInfo, success } = useSelector(
     (state) => state.user
   );
-
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -32,13 +31,36 @@ const SignUp = () => {
     });
   };
 
+  useEffect(() => {
+    if (success) navigate('/login');
+  }, [navigate, success]);
+
+  const onSubmitForm = (event) => {
+    // event.preventDefault();
+
+    if (data.password !== data.rePassword) {
+      alert('Password mismatch');
+      return;
+    }
+    data.email = data.email.toLowerCase();
+    dispatch(
+      registerUser({
+        email: data.email,
+        password: data.password,
+        rePassword: data.rePassword,
+        name: data.name,
+        gender: data.gender,
+      })
+    );
+  };
+
   // useEffect(() => {
   //   if (success) navigate('/login');
   // }, [navigate]);
 
   return (
     <WrapperContainer>
-      <Form>
+      <Form onSubmit={onSubmitForm}>
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>아이디</Form.Label>
           <Form.Control
@@ -94,7 +116,9 @@ const SignUp = () => {
           />
           <label htmlFor='select2'>여성</label>
         </div>
-        <FormBtn variant='outline-success'>회원가입</FormBtn>
+        <FormBtn variant='outline-success' disabled={loading}>
+          회원가입
+        </FormBtn>
       </Form>
     </WrapperContainer>
   );
