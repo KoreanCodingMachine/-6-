@@ -3,8 +3,16 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { userLogin } from '../redux/modules/userActions';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const { loading, error, userInfo } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -15,6 +23,16 @@ const Login = () => {
   const onChangePassword = (event) => {
     setPassword(event.target.value);
   };
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/');
+    }
+  }, [navigate, userInfo]);
+
+  // const onSubmitForm = () => {
+  //   dispatch(userLogin({ email: email, password: password }));
+  // };
 
   return (
     <WrapperContainer>
@@ -41,7 +59,14 @@ const Login = () => {
             onChange={onChangePassword}
           />
         </Form.Group>
-        <FormBtn variant='outline-success'>로그인</FormBtn>
+        <FormBtn
+          variant='outline-success'
+          onClick={() => {
+            dispatch(userLogin({ email: email, password: password }));
+          }}
+        >
+          로그인
+        </FormBtn>
         <FormBtn className='mt-3' variant='outline-warning'>
           카카오 로그인
         </FormBtn>

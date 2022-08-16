@@ -3,15 +3,14 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import styled from 'styled-components';
-import { registerUser } from '../redux/modules/userSlice';
+import { registerUser } from '../redux/modules/userActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
-  const { loading, error, success, userInfo } = useSelector(
+  const { loading, error, userInfo, success } = useSelector(
     (state) => state.user
   );
-
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -32,13 +31,36 @@ const SignUp = () => {
     });
   };
 
+  useEffect(() => {
+    if (success) navigate('/login');
+  }, [navigate, success]);
+
+  const onSubmitForm = (event) => {
+    event.preventDefault();
+
+    if (data.password !== data.rePassword) {
+      alert('Password mismatch');
+      return;
+    }
+    // transform email string to lowercase to avoid case sensitivity issues in login
+    data.email = data.email.toLowerCase();
+    dispatch(
+      registerUser({
+        email: data.email,
+        password: data.password,
+        nickname: data.nickname,
+        gender: data.gender,
+      })
+    );
+  };
+
   // useEffect(() => {
   //   if (success) navigate('/login');
   // }, [navigate]);
 
   return (
     <WrapperContainer>
-      <Form>
+      <Form onSubmit={onSubmitForm}>
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>아이디</Form.Label>
           <Form.Control
@@ -49,6 +71,7 @@ const SignUp = () => {
             value={data.email}
             onChange={onChangeHandler}
           />
+          <button>아이디 중복체크</button>
         </Form.Group>
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>비밀번호</Form.Label>
@@ -73,15 +96,23 @@ const SignUp = () => {
           />
         </Form.Group>
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
-          <Form.Label>이름</Form.Label>
-          <Form.Control type='text' size='lg' placeholder='이름' />
+          <Form.Label>닉네임</Form.Label>
+          <Form.Control
+            type='text'
+            size='lg'
+            placeholder='닉네임'
+            name='nickname'
+            value={data.nickname}
+            onChange={onChangeHandler}
+          />
+          <button>닉네임 중복체크</button>
         </Form.Group>
         <div className='select'>
           <input
             type='radio'
             id='select'
             name='gender'
-            value='male'
+            value='MALE'
             onChange={onChangeHandler}
           />
           <label htmlFor='select'>남성</label>
@@ -89,12 +120,32 @@ const SignUp = () => {
             type='radio'
             id='select2'
             name='gender'
-            value='female'
+            value='FEMALE'
             onChange={onChangeHandler}
           />
           <label htmlFor='select2'>여성</label>
         </div>
-        <FormBtn variant='outline-success'>회원가입</FormBtn>
+        <FormBtn
+          variant='outline-success'
+          onClick={() => {
+            if (data.password !== data.rePassword) {
+              alert('Password mismatch');
+              return;
+            }
+            // transform email string to lowercase to avoid case sensitivity issues in login
+            data.email = data.email.toLowerCase();
+            dispatch(
+              registerUser({
+                email: data.email,
+                nickname: data.nickname,
+                password: data.password,
+                gender: data.gender,
+              })
+            );
+          }}
+        >
+          회원가입
+        </FormBtn>
       </Form>
     </WrapperContainer>
   );

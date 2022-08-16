@@ -1,109 +1,74 @@
-// features/user/userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { getUserDetails, registerUser, userLogin } from './userActions';
 
-// {
-//     "memberId": "아이디",
-//     "password": "패스워드",
-//     "nickname": "닉네임",
-//     "gender": "male"
-//   }
-
-// 회원가입 -> 서버로 post -> 서버 DB에 저장
-export const registerUser = createAsyncThunk(
-  'user/register',
-  async ({ email, password, rePassword, name, gender }, thunkApi) => {
-    try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-      await axios.post(
-        `http://localhost:5001/register`,
-        { email, password, rePassword, name, gender },
-        config
-      );
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return thunkApi.rejectWithValue(error.response.data.message);
-      } else {
-        return thunkApi.rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-// 로그인
-// 로그인 요청 -> response의 data에 access토큰을 받아옴 -> 로컬 스토리지에 저장
-export const loginUser = createAsyncThunk(
-  'user/login',
-  async ({ email, password }, thunkApi) => {
-    try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-      const { data } = await axios.post(
-        `http://localhost:5001/login`,
-        { email, password },
-        config
-      );
-
-      localStorage.setItem('userToken', data.userToken);
-      return data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return thunkApi.rejectWithValue(error.response.data.message);
-      } else {
-        return thunkApi.rejectWithValue(error.message);
-      }
-    }
-  }
-);
+// initialize userToken from local storage
+// accessToken , refreshToken
+const userToken = localStorage.getItem('access-token')
+  ? localStorage.getItem('userToken')
+  : null;
 
 const initialState = {
   loading: false,
-  userInfo: {}, // for user object
-  userToken: null, // for storing the JWT
+  userInfo: null,
+  userToken,
   error: null,
-  success: false, // for monitoring the registration process.
+  success: false,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      localStorage.removeItem('userToken'); // delete token from storage
+      state.loading = false;
+      state.userInfo = null;
+      state.userToken = null;
+      state.error = null;
+    },
+  },
   extraReducers: {
-    [registerUser.pending]: (state, action) => {
+    // login user
+    [userLogin.pending]: (state) => {
       state.loading = true;
       state.error = null;
     },
-    [registerUser.fulfilled]: (state, action) => {
+    [userLogin.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      state.success = true;
+      state.userInfo = payload;
+      state.userToken = payload.userToken;
     },
-    [registerUser.rejected]: (state, action) => {
+    [userLogin.rejected]: (state, { payload }) => {
       state.loading = false;
-      state.error = action.payload;
+      state.error = payload;
     },
-    [loginUser.pending]: (state, action) => {
+    // register user
+    [registerUser.pending]: (state) => {
       state.loading = true;
       state.error = null;
     },
-    [loginUser.fulfilled]: (state, action) => {
+    [registerUser.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      state.userInfo = action.payload;
-      state.userToken = action.payload.userToken;
+      state.success = true; // registration successful
     },
-    [loginUser.rejected]: (state, action) => {
+    [registerUser.rejected]: (state, { payload }) => {
       state.loading = false;
-      state.error = action.payload;
+      state.error = payload;
+    },
+    // get user details
+    [getUserDetails.pending]: (state) => {
+      state.loading = true;
+    },
+    [getUserDetails.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.userInfo = payload;
+    },
+    [getUserDetails.rejected]: (state, { payload }) => {
+      state.loading = false;
     },
   },
 });
 
-export const {} = userSlice.actions;
+export const { logout } = userSlice.actions;
+
 export default userSlice.reducer;
