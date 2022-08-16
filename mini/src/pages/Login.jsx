@@ -4,12 +4,13 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../redux/modules/userSlice';
+import { userLogin } from '../redux/modules/userActions';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { loading, error, userInfo } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -29,13 +30,13 @@ const Login = () => {
     }
   }, [navigate, userInfo]);
 
-  const onSubmitForm = () => {
-    dispatch(loginUser({ email: email, password: password }));
-  };
+  // const onSubmitForm = () => {
+  //   dispatch(userLogin({ email: email, password: password }));
+  // };
 
   return (
     <WrapperContainer>
-      <Form onSubmit={onSubmitForm}>
+      <Form>
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>아이디</Form.Label>
           <Form.Control
@@ -58,7 +59,14 @@ const Login = () => {
             onChange={onChangePassword}
           />
         </Form.Group>
-        <FormBtn variant='outline-success'>로그인</FormBtn>
+        <FormBtn
+          variant='outline-success'
+          onClick={() => {
+            dispatch(userLogin({ email: email, password: password }));
+          }}
+        >
+          로그인
+        </FormBtn>
         <FormBtn className='mt-3' variant='outline-warning'>
           카카오 로그인
         </FormBtn>
