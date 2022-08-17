@@ -8,6 +8,7 @@ const Time = () => {
   const [hours, setHours] = useState(0);
   const [minute, setMinute] = useState(0);
 
+  const data = localStorage.getItem('user-info');
   const setDate = () => {
     let now = moment();
     setHours(now.hour());
@@ -24,7 +25,7 @@ const Time = () => {
       <p className='time'>
         {hours}:{minute} 분
       </p>
-      <p>Hi, How about Today? Kim Ju Hyeong</p>
+      <p className='user-interface'>Hi, How about Today? {data}</p>
     </Wrapper>
   );
 };
@@ -34,5 +35,9 @@ export default Time;
 export const Wrapper = styled.div`
   .time {
     text-align: center;
+    font-size: 36px;
+  }
+  .user-interface {
+    font-size: 24px;
   }
 `;

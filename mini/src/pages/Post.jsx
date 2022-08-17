@@ -5,13 +5,12 @@ import Container from 'react-bootstrap/Container';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { postData } from '../redux/modules/postSlice';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Post = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
-  console.log(id);
+
   // 제목(title) , 이미지(imgUrl) , 내용(content) , 작성자(nickname)
   // img -> 이미지 전송 어떻게 할지 고민 , 작성자 -> 로그인한 유저 정보일것임으로 로그인 후 구현
   // id는 따로 저장하지 않아도 다음 id로 자동 설정된다.
@@ -50,7 +49,7 @@ const Post = () => {
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>이미지</Form.Label>
           <Form.Control
-            type='email'
+            type='file'
             placeholder='이미지 url'
             value={data.img}
             onChange={onChangeHandler}
