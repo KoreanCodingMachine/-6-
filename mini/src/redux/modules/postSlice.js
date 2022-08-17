@@ -14,7 +14,6 @@ export const getData = createAsyncThunk(
   async (payload, thunkApi) => {
     try {
       const response = await axios.get('http://localhost:5001/post');
-      console.log(response);
       return thunkApi.fulfillWithValue(response.data);
     } catch (error) {
       console.log(error);
@@ -30,7 +29,6 @@ export const postData = createAsyncThunk(
   async (payload, thunkApi) => {
     try {
       const response = await axios.post('http://localhost:5001/post', payload);
-      console.log(response);
       return thunkApi.fulfillWithValue(response.data);
     } catch (error) {
       console.log(error);

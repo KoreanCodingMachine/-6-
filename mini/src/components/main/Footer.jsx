@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Footer = () => {
-  return <Wrapper>오늘은 너의 날이야</Wrapper>;
+  return <Wrapper></Wrapper>;
 };
 
 export default Footer;

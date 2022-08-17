@@ -6,11 +6,19 @@ import styled from 'styled-components';
 import { registerUser } from '../redux/modules/userActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { existNickname, existMemberId } from '../redux/modules/userActions';
 
 const SignUp = () => {
-  const { loading, error, userInfo, success } = useSelector(
-    (state) => state.user
-  );
+  const { success } = useSelector((state) => state.user);
+
+  const idMsg = useSelector((state) => state.user.idMsg);
+  const nickMsg = useSelector((state) => state.user.nickMsg);
+
+  const idErrorMessage = useSelector((state) => state.user.idErrorMsg);
+  const nickErrorMessage = useSelector((state) => state.user.nickErrorMsg);
+
+  const duplicateSuccess = useSelector((state) => state.user.duplicateSuccess);
+
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -19,7 +27,7 @@ const SignUp = () => {
     email: '',
     password: '',
     rePassword: '',
-    name: '',
+    nickname: '',
     gender: '',
   });
 
@@ -35,24 +43,24 @@ const SignUp = () => {
     if (success) navigate('/login');
   }, [navigate, success]);
 
-  const onSubmitForm = (event) => {
-    event.preventDefault();
+  // const onSubmitForm = (event) => {
+  //   event.preventDefault();
 
-    if (data.password !== data.rePassword) {
-      alert('Password mismatch');
-      return;
-    }
-    // transform email string to lowercase to avoid case sensitivity issues in login
-    data.email = data.email.toLowerCase();
-    dispatch(
-      registerUser({
-        email: data.email,
-        password: data.password,
-        nickname: data.nickname,
-        gender: data.gender,
-      })
-    );
-  };
+  //   if (data.password !== data.rePassword) {
+  //     alert('Password mismatch');
+  //     return;
+  //   }
+  //   // transform email string to lowercase to avoid case sensitivity issues in login
+  //   data.email = data.email.toLowerCase();
+  //   dispatch(
+  //     registerUser({
+  //       email: data.email,
+  //       password: data.password,
+  //       nickname: data.nickname,
+  //       gender: data.gender,
+  //     })
+  //   );
+  // };
 
   // useEffect(() => {
   //   if (success) navigate('/login');
@@ -60,7 +68,7 @@ const SignUp = () => {
 
   return (
     <WrapperContainer>
-      <Form onSubmit={onSubmitForm}>
+      <Form>
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>아이디</Form.Label>
           <Form.Control
@@ -71,9 +79,23 @@ const SignUp = () => {
             value={data.email}
             onChange={onChangeHandler}
           />
-          <button>아이디 중복체크</button>
+          <button
+            type='button'
+            onClick={() => {
+              dispatch(existMemberId({ email: data.email }));
+            }}
+          >
+            아이디 중복체크
+          </button>
+          {duplicateSuccess === true ? (
+            idMsg === null ? null : (
+              <p className='msg'>{idMsg}</p>
+            )
+          ) : idErrorMessage === null ? null : (
+            <p className='error'>{idErrorMessage}</p>
+          )}
         </Form.Group>
-        <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+        <Form.Group className='mb-3' controlId='exampleForm.ControlInput2'>
           <Form.Label>비밀번호</Form.Label>
           <Form.Control
             type='text'
@@ -84,7 +106,7 @@ const SignUp = () => {
             onChange={onChangeHandler}
           />
         </Form.Group>
-        <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+        <Form.Group className='mb-3' controlId='exampleForm.ControlInput3'>
           <Form.Label>비밀번호 확인</Form.Label>
           <Form.Control
             type='text'
@@ -95,7 +117,7 @@ const SignUp = () => {
             onChange={onChangeHandler}
           />
         </Form.Group>
-        <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+        <Form.Group className='mb-3' controlId='exampleForm.ControlInput4'>
           <Form.Label>닉네임</Form.Label>
           <Form.Control
             type='text'
@@ -105,7 +127,21 @@ const SignUp = () => {
             value={data.nickname}
             onChange={onChangeHandler}
           />
-          <button>닉네임 중복체크</button>
+          <button
+            type='button'
+            onClick={() => {
+              dispatch(existNickname({ nickname: data.nickname }));
+            }}
+          >
+            닉네임 중복체크
+          </button>
+          {duplicateSuccess === true ? (
+            nickMsg === null ? null : (
+              <p className='msg'>{nickMsg}</p>
+            )
+          ) : nickErrorMessage === null ? null : (
+            <p className='error'>{nickErrorMessage}</p>
+          )}
         </Form.Group>
         <div className='select'>
           <input
@@ -126,6 +162,7 @@ const SignUp = () => {
           <label htmlFor='select2'>여성</label>
         </div>
         <FormBtn
+          type='button'
           variant='outline-success'
           onClick={() => {
             if (data.password !== data.rePassword) {
@@ -172,6 +209,12 @@ const WrapperContainer = styled(Container)`
       align-items: center;
       justify-content: center;
       margin-bottom: 1rem;
+    }
+    .msg {
+      color: blue;
+    }
+    .error {
+      color: red;
     }
   }
 `;
