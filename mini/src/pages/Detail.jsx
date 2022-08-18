@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Comment from '../components/comments/Comment';
+import Comment from '../components/write/Comment';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Detail = () => {
