@@ -14,7 +14,6 @@ const Comment = ({ id }) => {
   const state = useSelector((state) => state.comment.comment);
   console.log(state.data);
   const [input, setInput] = useState('');
-  const [like, setLike] = useState(false);
 
   const onChangeHandler = (event) => {
     setInput(event.target.value);
@@ -25,7 +24,6 @@ const Comment = ({ id }) => {
     let body = {
       postId: id,
       content: input,
-      like: like,
     };
     dispatch(postCommentData(body));
     window.location.reload();
