@@ -12,7 +12,7 @@ import {
 const Comment = ({ id }) => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.comment.comment);
-  console.log(state);
+  console.log(state.data);
   const [input, setInput] = useState('');
   const [like, setLike] = useState(false);
 
@@ -28,6 +28,7 @@ const Comment = ({ id }) => {
       like: like,
     };
     dispatch(postCommentData(body));
+    window.location.reload();
   };
 
   // 함수로 하니까 안됨 시x => event.prevent.default해줘야함 (form 안이라서)
@@ -62,31 +63,34 @@ const Comment = ({ id }) => {
             name='input'
             value={input}
             onChange={onChangeHandler}
-            onClick={onPostHandler}
           />
           <button onClick={onPostHandler}>추가</button>
         </Form.Group>
       </Form>
-      {state.map((item) => (
-        <StyledSection key={item.id}>
-          <h2>writer:</h2>
-          <p>{item.content}</p>
-          <button
-            onClick={() => {
-              dispatch(putCommentData({ id: item.id, comment: input }));
-            }}
-          >
-            수정
-          </button>
-          <button
-            onClick={() => {
-              dispatch(deleteCommentData(item.id));
-            }}
-          >
-            삭제
-          </button>
-        </StyledSection>
-      ))}
+      {state.data &&
+        state.data.map((item) => (
+          <StyledSection key={item.id}>
+            {console.log(item)}
+            <h2>{item.nickname}</h2>
+            <p>{item.content}</p>
+            <button
+              onClick={() => {
+                dispatch(putCommentData({ id: item.id, content: input }));
+                window.location.reload();
+              }}
+            >
+              수정
+            </button>
+            <button
+              onClick={() => {
+                dispatch(deleteCommentData(item.id));
+                window.location.reload();
+              }}
+            >
+              삭제
+            </button>
+          </StyledSection>
+        ))}
     </div>
   );
 };

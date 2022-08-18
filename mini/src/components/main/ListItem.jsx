@@ -4,12 +4,11 @@ import { deleteData } from '../../redux/modules/postSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 
 const ListItem = ({ item }) => {
   const { id, title, nickname, content } = item;
-
+  const userLogin = localStorage.getItem('user-info');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -22,6 +21,7 @@ const ListItem = ({ item }) => {
 
   const onRemoveHandler = () => {
     dispatch(deleteData(id));
+    window.location.reload();
   };
 
   const onPatchHandler = () => {
@@ -57,9 +57,11 @@ const ListItem = ({ item }) => {
             >
               수정
             </Button>
-            <Button variant='primary' onClick={onRemoveHandler}>
-              삭제
-            </Button>
+            {userLogin !== null ? (
+              <Button variant='primary' onClick={onRemoveHandler}>
+                삭제
+              </Button>
+            ) : null}
           </div>
         </Card.Body>
       </Card>

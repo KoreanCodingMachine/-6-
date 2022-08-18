@@ -7,8 +7,8 @@ import { getData } from '../../redux/modules/postSlice';
 
 const List = () => {
   const dispatch = useDispatch();
-  const data = useSelector((state) => state.postSlice.post);
-
+  const data = useSelector((state) => state.postSlice.post.data);
+  console.log(data);
   useEffect(() => {
     dispatch(getData());
   }, []);

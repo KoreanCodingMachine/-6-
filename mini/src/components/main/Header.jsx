@@ -10,7 +10,7 @@ import { logoutUser } from '../../redux/modules/userActions';
 const Header = () => {
   const { userInfo, userToken } = useSelector((state) => state.user);
   const data = localStorage.getItem('user-info');
-  console.log(data);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
