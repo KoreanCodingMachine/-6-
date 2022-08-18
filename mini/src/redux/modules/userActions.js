@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-const testApi = 'http://43.200.179.217:8080';
-const Api = 'http://3.39.190.253';
+const Api = 'http://43.200.179.217:8080';
 
 export const userLogin = createAsyncThunk(
   'user/login',
@@ -12,11 +11,13 @@ export const userLogin = createAsyncThunk(
       const config = {
         headers: {
           'Content-Type': 'application/json',
+          Authorization: user.userToken,
+          RefreshToken: user.refreshToken,
         },
       };
 
       const response = await axios.post(
-        'http://43.200.179.217:8080/api/member/login',
+        `${Api}/api/member/login`,
         { email, password },
         config
       );
@@ -66,7 +67,7 @@ export const logoutUser = createAsyncThunk(
     console.log(user);
     try {
       await axios.post(
-        'http://43.200.179.217:8080/api/member/logout',
+        `${Api}/api/member/logout`,
         {},
         {
           headers: {

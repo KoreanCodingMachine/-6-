@@ -1,11 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const userToken = localStorage.getItem('access-token')
+  ? localStorage.getItem('access-token')
+  : null;
+
+const refreshToken = localStorage.getItem('refresh-token')
+  ? localStorage.getItem('refresh-token')
+  : null;
+
 const initialState = {
   comment: [],
   isLoading: false,
   error: null,
+  userToken,
+  refreshToken,
 };
+
+const api = 'http://43.200.179.217:8080';
 
 // postId -> 메인글의 id => useParams의 값
 // id -> 댓글의 순번 , 댓글 리스트의 id
@@ -16,9 +28,7 @@ export const getCommentData = createAsyncThunk(
   'comment/getData',
   async (payload, thunkApi) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5001/comment?postId=${payload}`
-      );
+      const response = await axios.get(`${api}/api/comment/${payload}`);
       console.log(response);
       return thunkApi.fulfillWithValue(response.data);
     } catch (error) {
@@ -32,17 +42,25 @@ export const getCommentData = createAsyncThunk(
 // payload -> comment,postId,Id
 export const postCommentData = createAsyncThunk(
   'comment/postData',
-  async (payload, thunkApi) => {
+  async (payload, { getState, rejectWithValue }) => {
+    const { user } = getState();
     try {
       const response = await axios.post(
-        `http://localhost:5001/comment?postId=${payload.postId}`,
-        payload
+        `${api}/api/comment/${payload.postId}`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: user.userToken,
+            RefreshToken: user.refreshToken,
+          },
+        }
       );
       console.log(response);
-      return thunkApi.fulfillWithValue(response.data);
+      return response.data;
     } catch (error) {
       console.log(error);
-      return thunkApi.rejectWithValue(error);
+      return rejectWithValue(error);
     }
   }
 );
@@ -51,17 +69,27 @@ export const postCommentData = createAsyncThunk(
 // payload -> 수정할 comment,commentId
 export const putCommentData = createAsyncThunk(
   'comment/putData',
-  async ({ id, comment }, thunkApi) => {
+  async ({ id, content }, { getState, rejectWithValue }) => {
+    const { user } = getState();
     try {
-      const response = await axios.put(`http://localhost:5001/comment/${id}`, {
-        id,
-        comment,
-      });
+      const response = await axios.put(
+        `${api}/api/comment/${id}`,
+        {
+          content,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: user.userToken,
+            RefreshToken: user.refreshToken,
+          },
+        }
+      );
       console.log(response.data);
-      return thunkApi.fulfillWithValue(response.data);
+      return response.data;
     } catch (error) {
       console.log(error);
-      return thunkApi.rejectWithValue(error);
+      return rejectWithValue(error);
     }
   }
 );
@@ -70,17 +98,22 @@ export const putCommentData = createAsyncThunk(
 // payload-> 수정할 commentId -> id
 export const deleteCommentData = createAsyncThunk(
   'comment/deleteData',
-  async (arg, thunkApi) => {
+  async (arg, { getState, rejectWithValue }) => {
+    const { user } = getState();
     try {
-      const response = await axios.delete(
-        `http://localhost:5001/comment/${arg}`
-      );
+      const response = await axios.delete(`${api}/api/comment/${arg}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: user.userToken,
+          RefreshToken: user.refreshToken,
+        },
+      });
       console.log(response);
       console.log(arg);
-      return thunkApi.fulfillWithValue(arg);
+      return arg;
     } catch (error) {
       console.log(error);
-      return thunkApi.rejectWithValue(error);
+      return rejectWithValue(error);
     }
   }
 );
